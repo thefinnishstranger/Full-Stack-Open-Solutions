@@ -1,0 +1,69 @@
+name: CI pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./BlogList
+
+      - name: Rebuild native modules
+        run: npm rebuild
+        working-directory: ./BlogList
+
+      - name: Remove bcrypt module
+        run: npm uninstall bcrypt
+        working-directory: ./BlogList
+
+      - name: Reinstall bcrypt module
+        run: npm install bcrypt
+        working-directory: ./BlogList
+
+      - name: Start server in background
+        run: |
+          npm start &
+          sleep 10
+        working-directory: ./BlogList
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+          PORT: ${{ secrets.PORT }}
+
+      - name: Wait for server to start
+        run: sleep 10
+
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./BlogList/frontend
+
+      - name: Build frontend
+        run: |
+          npm run dev &
+          sleep 10
+        working-directory: ./BlogList/frontend
+
+      - name: Wait for frontend to start
+        run: sleep 10
+
+      - name: Discord Webhook Notify
+        uses: rjstone/discord-webhook-notify@v1.0.4
+        with:
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: The job has succeeded
+        if: ${{ success() }}
+        run: echo "Success!"

@@ -1,0 +1,13 @@
+browser -> server: HTTP POST: https://fullstack-exampleapp.herokuapp.com/new_note
+form submitted by clicking button
+server -> browser: HTTP GET request to the address notes
+browser -> server: HTTP GET: https://fullstack-exampleapp.herokuapp.com/notes
+server -> browser: HTML code
+browser -> server: HTTP GET: https://fullstack-exampleapp.herokuapp.com/main.css
+server -> browser: main.css
+browser -> server: HTTP GET: https://fullstack-exampleapp.herokuapp.com/main.js
+server -> browser: main.js
+browser executes main.js, which request JSON data
+browser -> server: HTTP GET: https://fullstack-exampleapp.herokuapp.com/data.json
+server -> browser: [{content: "something", date: "2024-05-16"}, ...]
+the rendering of the notes to the display is performed by the browser

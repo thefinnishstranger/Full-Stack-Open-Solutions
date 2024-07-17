@@ -1,0 +1,4 @@
+browser -> server: https://fullstack-exampleapp.herokuapp.com/new_note_spa
+Content-type: application/json
+server -> browser: responds with status code 201 created
+the rendering of the notes to the display is performed by the browser

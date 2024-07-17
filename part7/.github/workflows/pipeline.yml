@@ -1,0 +1,31 @@
+name: CI pipeline
+
+on:
+    push:
+        branches:
+            - main
+        pull_request:
+            branches:
+                - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                node-version: '20'
+            - name: Install dependencies
+              run: cd BlogList && npm install
+            - name: Build server
+              run: npm run build
+            - name: Build frontend
+              run: cd BlogList && cd frontend && npm run build
+            - name: Discord Webhook Notify
+              uses: rjstone/discord-webhook-notify@v1.0.4
+              with:
+                webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+            - name: The job has succeeded
+              if: ${{ success() }}
+              run: echo "Success!"
